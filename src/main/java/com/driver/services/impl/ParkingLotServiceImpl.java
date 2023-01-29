@@ -23,6 +23,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         ParkingLot parkingLot=new ParkingLot();
         parkingLot.setName(name);
         parkingLot.setAddress(address);
+        List<Spot> spotList=new ArrayList<>();
+        parkingLot.setSpotList(spotList);
         parkingLotRepository1.save(parkingLot);
         return parkingLot;
     }
@@ -30,16 +32,18 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     @Override
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
         Spot spot=new Spot();
-        spot.setId(parkingLotId);
+        ParkingLot parkingLot=parkingLotRepository1.findById(parkingLotId).get();
+        spot.setParkingLot(parkingLot);
         spot.setPricePerHour(pricePerHour);
         if(numberOfWheels==2)
             spot.setSpotType(SpotType.TWO_WHEELER);
         else if(numberOfWheels==4)
             spot.setSpotType(SpotType.FOUR_WHEELER);
         else spot.setSpotType(SpotType.OTHERS);
-        List<Spot> spots=new ArrayList<>();
+        List<Spot> spots=parkingLot.getSpotList();
         spots.add(spot);
-
+        spotRepository1.save(spot);
+        parkingLotRepository1.save(parkingLot);
         return spot;
 
     }
@@ -49,6 +53,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         Spot spot= spotRepository1.findById(spotId).get();
         if(spot != null)
             spotRepository1.delete(spot);
+
     }
 
     @Override
@@ -63,6 +68,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
                 spotRepository1.save(spot);
             }
         }
+        spotRepository1.save(spot);
         return spot;
 
     }
@@ -70,6 +76,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     @Override
     public void deleteParkingLot(int parkingLotId) {
         ParkingLot parkingLot=parkingLotRepository1.findById(parkingLotId).get();
+        List<Spot> spots=parkingLot.getSpotList();
+        spotRepository1.deleteInBatch(spots);
         if(parkingLot !=null)
             parkingLotRepository1.delete(parkingLot);
     }
