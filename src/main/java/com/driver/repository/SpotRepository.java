@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SpotRepository extends JpaRepository<Spot, Integer>{
 
-    void getSpotByID(int spotId);
+
 }
