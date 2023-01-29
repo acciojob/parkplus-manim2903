@@ -10,6 +10,15 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private int numberOfHours;
+    private int bill;
+
+    public int getBill() {
+        return bill;
+    }
+
+    public void setBill(int bill) {
+        this.bill = bill;
+    }
 
     @OneToOne
     @JoinColumn
